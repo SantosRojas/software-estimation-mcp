@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "software-estimation": {
+      "command": "ABSOLUTE_PATH_TO_PROJECT/.venv/bin/python",
+      "args": ["-m", "estimation_mcp.server"],
+      "env": {
+        "ESTIMATOR_OUTPUT_DIR": "ABSOLUTE_PATH_TO_PROJECT/output",
+        "ESTIMATOR_TRANSPORT": "stdio"
+      }
+    }
+  }
+}

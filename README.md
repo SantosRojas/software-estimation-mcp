@@ -46,8 +46,8 @@ uv run python -m estimation_mcp.server
 
 Hay dos plantillas en `examples/`; cambia las rutas por la ubicación real del proyecto:
 
-- `examples/mcp-config.json` — formato `mcpServers` para Cursor, Claude Desktop u otro cliente compatible.
-- `examples/opencode.json` — formato `mcp.servers` para OpenCode. Puede usarse como configuración de proyecto en cualquier repositorio consumidor, o copiarse a `~/.config/opencode/opencode.json` para disponer del servidor en todos los proyectos.
+- `examples/mcp-config.json` — formato `mcpServers` para Cursor, Claude Desktop u otro cliente compatible (Windows; la variante Linux está en `examples/mcp-config.linux.json`).
+- `examples/opencode.json` — formato `mcp.servers` para OpenCode (Windows; Linux en `examples/opencode.linux.json`). Puede usarse como configuración de proyecto en cualquier repositorio consumidor, o copiarse a `~/.config/opencode/opencode.json` para disponer del servidor en todos los proyectos.
 
 Formato estándar (`mcpServers`):
 
