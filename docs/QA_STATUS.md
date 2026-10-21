@@ -1,13 +1,31 @@
-# Estado de validación de esta entrega
+# Estado de validación
+
+## Cómo validar este proyecto
+
+El entorno se define únicamente en `pyproject.toml` + `uv.lock` (fuente única de dependencias). No existe `requirements.txt`.
+
+```powershell
+uv sync --extra dev   # crea/actualiza .venv con fastmcp, reportlab, pytest y ruff
+uv run pytest -q      # suite completa
+uv run ruff check src tests
+```
 
 ## Comprobaciones ejecutadas
 
-- Compilación sintáctica Python (`compileall`): correcta.
-- Pruebas automatizadas: 13/13 aprobadas.
-- Generación de PDF de ejemplo: propuesta de 4 páginas, cotización de 2 páginas y plan de acción de 2 páginas.
-- Inspección estructural de PDF: cabecera PDF válida, A4, sin cifrado ni campos/forms inesperados.
-- Render a imágenes e inspección visual de páginas: realizada para los tres documentos, incluyendo saltos de página, tablas, encabezados y bloque de aprobación.
+- Instalación reproducible desde `uv.lock` en un `.venv` limpio (sin heredar paquetes de otros proyectos).
+- Handshake real con FastMCP 4.1.3: las 14 herramientas se enumeran vía `mcp.list_tools()`.
+- Pipeline end-to-end: PERT → buffers → cotización → roadmap → PDF de propuesta, cotización, plan de acción y Markdown libre. Cabecera PDF válida y huella SHA-256 devuelta.
+- Separación de canales: en STDIO, `stdout` queda en 0 bytes durante la ejecución (transporta el protocolo) y los logs de observabilidad salen por `stderr`.
+- Pruebas automatizadas: 23/23.
+- Lint (`ruff check`): sin errores.
+- Protección contra path traversal verificada empíricamente y cubierta por test de regresión.
 
-## Comprobación pendiente en un entorno con internet
+## Cobertura de pruebas
 
-El entorno de construcción no pudo resolver DNS para instalar `fastmcp` desde el índice de paquetes. Por ello no se verificó el handshake real del servidor MCP ni el descubrimiento de herramientas a través de un cliente MCP, aunque el módulo y las funciones del servidor compilan sintácticamente y siguen el patrón documentado de FastMCP 4. En la máquina de instalación, ejecute `python -m pip install -e ".[dev]"`, inicie un cliente MCP y confirme que se enumeran las 14 herramientas antes del uso operativo.
+- `tests/test_estimation.py`: fórmulas PERT, validación de orden O<=M<=P, buffers aditivos, margen sobre venta e impuesto, reparto de fases con días cortos, validación de WBS, no-inferencia de categorías de alcance y orden del registro de riesgos.
+- `tests/test_documents.py`: generación de PDF, neutralización de path traversal (`../../`, rutas absolutas, Windows), no sobrescritura, rechazo de nombres vacíos, buffers en Markdown y advertencia de datos faltantes.
+- `tests/test_server.py`: `compare_scenarios` (cálculo, límites de 1 y 10 escenarios, entrada no numérica).
+
+## Limitación conocida
+
+La suite se ejecuta en el host; no hay aún un despliegue HTTP con autenticación real probado. Para red, ver `docs/SECURITY_AND_OPERATIONS.md`.

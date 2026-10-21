@@ -29,26 +29,17 @@ Requiere Python 3.11 o superior. La línea `fastmcp>=4,<5` corresponde a la vers
 
 ## Instalación en Windows (PowerShell)
 
-Desde la carpeta del proyecto descomprimido:
+Usa [uv](https://docs.astral.sh/uv/) para un entorno reproducible a partir de `uv.lock`:
 
 ```powershell
-py -3.13 -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-python -m pip install -e ".[dev]"
+# Desde la carpeta del proyecto
+uv sync --extra dev
 
 # Prueba rápida del núcleo de negocio y del generador PDF
-python -m pytest -q
+uv run pytest -q
 
 # Iniciar el MCP en STDIO (normalmente lo inicia el cliente MCP)
-python -m estimation_mcp.server
-```
-
-Si la política de PowerShell bloquea la activación, puede usar directamente el ejecutable virtual:
-
-```powershell
-.\.venv\Scripts\python.exe -m pip install -e ".[dev]"
-.\.venv\Scripts\python.exe -m pytest -q
+uv run python -m estimation_mcp.server
 ```
 
 ## Conectar con un cliente MCP
@@ -63,7 +54,8 @@ Configura `mcpServers` en el cliente (Cursor, Claude Desktop u otro cliente comp
       "args": ["-m", "estimation_mcp.server"],
       "env": {
         "ESTIMATOR_OUTPUT_DIR": "C:\\Projects\\software-estimation-mcp\\output",
-        "ESTIMATOR_TRANSPORT": "stdio"
+        "ESTIMATOR_TRANSPORT": "stdio",
+        "ESTIMATOR_LOG_LEVEL": "INFO"
       }
     }
   }
@@ -113,13 +105,28 @@ Los nombres se convierten a slug seguro, se ignoran directorios indicados por el
 - **Cotización:** la moneda predeterminada es `PEN`, pero la tasa tributaria predeterminada es `0%` y debe indicarse explícitamente. Verifica la normativa aplicable, IGV/IVA, retenciones, licencias, alcance, plazos, vigencia y condiciones de pago.
 - La WBS, preguntas y riesgos son ayudas para el profesional; no reemplazan el juicio técnico, la validación con el cliente ni un contrato aprobado.
 
+## Observabilidad
+
+Cada invocación de herramienta emite logs estructurados en JSON por `stderr` (nunca por `stdout`, que transporta el protocolo STDIO):
+
+```json
+{"event": "tool_started", "tool": "calculate_pert", "correlation_id": "9676921e1f1c423b"}
+{"event": "tool_completed", "tool": "calculate_pert", "correlation_id": "9676921e1f1c423b", "duration_ms": 0.18}
+{"event": "tool_failed", "tool": "calculate_pert", "correlation_id": "83c9fa46b78a4895", "duration_ms": 0.07, "error_type": "ValueError", "error": "..."}
+```
+
+- `correlation_id` sigue una llamada de extremo a extremo en los logs del host.
+- `duration_ms` permite calcular latencia; los eventos `tool_completed`/`tool_failed` sirven como contadores de éxito/fallo.
+- El nivel se controla con `ESTIMATOR_LOG_LEVEL` (`DEBUG`, `INFO` —predeterminado—, `WARNING`, `ERROR`). Un nivel inválido cae a `INFO`.
+
 ## Pruebas
 
 ```powershell
-python -m pytest -q
+uv run pytest -q
+uv run ruff check src tests
 ```
 
-Las pruebas cubren fórmulas, validaciones de entradas, suma de buffers, cálculo de margen e impuesto, reparto de días de fases, preguntas de alcance, orden del registro de riesgos y escritura de PDF. Los archivos `examples/demo-*.pdf` son ejemplos ficticios, no cotizaciones reales.
+Las pruebas cubren fórmulas, validaciones de entradas, suma de buffers, cálculo de margen e impuesto, reparto de días de fases, preguntas de alcance, orden del registro de riesgos, comparación de escenarios, escritura de PDF y la protección contra path traversal. Los archivos `examples/demo-*.pdf` son ejemplos ficticios, no cotizaciones reales.
 
 ## Estructura
 
@@ -128,9 +135,11 @@ src/estimation_mcp/
   domain/estimation.py       # cálculos de estimación y cronograma
   domain/scope.py            # preguntas de alcance y registro de riesgos
   services/documents.py      # Markdown y PDF
+  observability.py           # logs estructurados por stderr
   server.py                  # herramientas y transporte MCP
   cli.py                     # entry point opcional
  tests/                       # pruebas automatizadas
+ .github/workflows/ci.yml     # CI: ruff + pytest en 3.11 y 3.13
  examples/                    # configuración y PDFs ficticios
  docs/                        # guía y referencia de herramientas
 ```
