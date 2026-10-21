@@ -1,6 +1,8 @@
 """Entry point opcional para iniciar en STDIO o HTTP mediante variables de entorno."""
 from __future__ import annotations
+
 import os
+
 from estimation_mcp.server import mcp
 
 

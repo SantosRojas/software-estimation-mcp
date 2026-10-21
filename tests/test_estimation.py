@@ -1,8 +1,14 @@
 from __future__ import annotations
-import math
+
 import pytest
 
-from estimation_mcp.domain.estimation import apply_buffers, calculate_pert, calculate_quotation, generate_roadmap, wbs_breakdown
+from estimation_mcp.domain.estimation import (
+    apply_buffers,
+    calculate_pert,
+    calculate_quotation,
+    generate_roadmap,
+    wbs_breakdown,
+)
 from estimation_mcp.domain.scope import analyze_scope_gaps, build_risk_register
 
 

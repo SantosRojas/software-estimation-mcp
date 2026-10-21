@@ -10,13 +10,12 @@ from pathlib import Path
 from typing import Any
 
 from reportlab.lib import colors
-from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
+from reportlab.lib.enums import TA_LEFT
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import mm
 from reportlab.platypus import (
     HRFlowable,
-    KeepTogether,
     PageBreak,
     Paragraph,
     SimpleDocTemplate,
@@ -409,9 +408,9 @@ def render_markdown_pdf(markdown_content: str, document_title: str, file_name: s
     lowered = title.casefold()
     if lowered.startswith("propuesta"):
         header_title = "PROPUESTA TÉCNICA Y COMERCIAL"
-    elif lowered.startswith("cotización") or lowered.startswith("cotizacion"):
+    elif lowered.startswith(("cotización", "cotizacion")):
         header_title = "COTIZACIÓN DE SERVICIOS DE SOFTWARE"
-    elif lowered.startswith("plan de acción") or lowered.startswith("plan de accion"):
+    elif lowered.startswith(("plan de acción", "plan de accion")):
         header_title = "PLAN DE ACCIÓN"
     else:
         header_title = title.upper()[:74]

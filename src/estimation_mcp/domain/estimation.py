@@ -17,7 +17,7 @@ class TaskEstimate(BaseModel):
     pessimistic_hours: float = Field(ge=0, le=1_000_000)
 
     @model_validator(mode="after")
-    def check_order(self) -> "TaskEstimate":
+    def check_order(self) -> TaskEstimate:
         if not self.optimistic_hours <= self.most_likely_hours <= self.pessimistic_hours:
             raise ValueError("Debe cumplirse optimista <= más probable <= pesimista.")
         return self
@@ -169,10 +169,14 @@ def apply_buffers(
     total_pct = sum(values.values())
     total = base * (1 + total_pct / 100)
     risk_bits = []
-    if codebase_type == "legacy": risk_bits.append("base de código legado (+25%)")
-    if has_third_party_integrations: risk_bits.append("integraciones externas (+20%)")
-    if qa_level == "rigorous": risk_bits.append("QA riguroso (+25%)")
-    if contingency > 0: risk_bits.append(f"contingencia adicional (+{contingency:g}%)")
+    if codebase_type == "legacy":
+        risk_bits.append("base de código legado (+25%)")
+    if has_third_party_integrations:
+        risk_bits.append("integraciones externas (+20%)")
+    if qa_level == "rigorous":
+        risk_bits.append("QA riguroso (+25%)")
+    if contingency > 0:
+        risk_bits.append(f"contingencia adicional (+{contingency:g}%)")
     risk_summary = ("Factores considerados: " + "; ".join(risk_bits) + ".") if risk_bits else "Sin factores adicionales de alto impacto en los buffers configurados."
     return {
         "base_hours": _round(base),

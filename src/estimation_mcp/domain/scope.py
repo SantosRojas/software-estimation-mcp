@@ -1,7 +1,7 @@
 """Herramientas deterministas de análisis de alcance y riesgos."""
 from __future__ import annotations
-from typing import Any
 
+from typing import Any
 
 CHECKLIST = {
     "objetivos_y_usuarios": ["objetivo de negocio", "usuarios/roles involucrados", "resultado verificable esperado"],

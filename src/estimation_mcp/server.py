@@ -17,7 +17,11 @@ from estimation_mcp.domain.estimation import (
     generate_roadmap as _generate_roadmap,
     wbs_breakdown as _wbs_breakdown,
 )
-from estimation_mcp.domain.scope import analyze_scope_gaps as _analyze_scope_gaps, build_risk_register as _build_risk_register
+from estimation_mcp.domain.scope import (
+    analyze_scope_gaps as _analyze_scope_gaps,
+    build_risk_register as _build_risk_register,
+)
+from estimation_mcp.observability import instrument
 from estimation_mcp.services.documents import (
     build_action_plan_markdown as _build_action_plan_markdown,
     build_proposal_markdown as _build_proposal_markdown,
@@ -40,12 +44,14 @@ mcp = FastMCP(
 
 
 @mcp.tool
+@instrument("wbs_breakdown")
 def wbs_breakdown(requirement_description: str, work_type: str) -> dict[str, Any]:
     """Genera una WBS inicial para feature, bugfix, legacy_patch, refactor o integration."""
     return _wbs_breakdown(requirement_description, work_type)
 
 
 @mcp.tool
+@instrument("calculate_pert")
 def calculate_pert(tasks: list[dict[str, Any]]) -> dict[str, Any]:
     """Calcula horas PERT, desviación, varianza, riesgo y referencias de confianza.
 
@@ -56,6 +62,7 @@ def calculate_pert(tasks: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 @mcp.tool
+@instrument("apply_buffers")
 def apply_buffers(
     pert_total_hours: float,
     codebase_type: str = "scratch",
@@ -69,6 +76,7 @@ def apply_buffers(
 
 
 @mcp.tool
+@instrument("calculate_quotation")
 def calculate_quotation(
     total_hours: float,
     hourly_rate_cost: float,
@@ -82,6 +90,7 @@ def calculate_quotation(
 
 
 @mcp.tool
+@instrument("generate_roadmap")
 def generate_roadmap(
     total_buffered_hours: float,
     team_size: int,
@@ -94,6 +103,7 @@ def generate_roadmap(
 
 
 @mcp.tool
+@instrument("analyze_scope_gaps")
 def analyze_scope_gaps(
     requirement_description: str,
     provided_details: list[str] | None = None,
@@ -108,6 +118,7 @@ def analyze_scope_gaps(
 
 
 @mcp.tool
+@instrument("build_risk_register")
 def build_risk_register(
     codebase_type: str = "modern",
     has_third_party_integrations: bool = False,
@@ -121,6 +132,7 @@ def build_risk_register(
 
 
 @mcp.tool
+@instrument("compare_scenarios")
 def compare_scenarios(scenarios: list[dict[str, Any]]) -> dict[str, Any]:
     """Compara hasta 10 escenarios de precio y duración con cálculos idénticos y trazables.
 
@@ -166,6 +178,7 @@ def compare_scenarios(scenarios: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 @mcp.tool
+@instrument("generate_proposal_markdown")
 def generate_proposal_markdown(
     client_name: str,
     project_title: str,
@@ -188,6 +201,7 @@ def generate_proposal_markdown(
 
 
 @mcp.tool
+@instrument("generate_proposal_pdf")
 def generate_proposal_pdf(
     client_name: str,
     project_title: str,
@@ -210,6 +224,7 @@ def generate_proposal_pdf(
 
 
 @mcp.tool
+@instrument("generate_action_plan_markdown")
 def generate_action_plan_markdown(
     client_name: str,
     project_title: str,
@@ -225,6 +240,7 @@ def generate_action_plan_markdown(
 
 
 @mcp.tool
+@instrument("generate_action_plan_pdf")
 def generate_action_plan_pdf(
     client_name: str,
     project_title: str,
@@ -240,6 +256,7 @@ def generate_action_plan_pdf(
 
 
 @mcp.tool
+@instrument("generate_quote_pdf")
 def generate_quote_pdf(
     client_name: str,
     project_title: str,
@@ -257,6 +274,7 @@ def generate_quote_pdf(
 
 
 @mcp.tool
+@instrument("render_markdown_pdf")
 def render_markdown_pdf(markdown_content: str, document_title: str, file_name: str | None = None) -> dict[str, Any]:
     """Convierte Markdown a PDF; solo admite texto, encabezados, listas y tablas, sin HTML externo."""
     return _render_markdown_pdf(markdown_content, document_title, file_name)
