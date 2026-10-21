@@ -1,5 +1,9 @@
 # Software Estimation MCP
 
+[![CI](https://github.com/SantosRojas/software-estimation-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/SantosRojas/software-estimation-mcp/actions/workflows/ci.yml)
+[![Python](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
 Servidor MCP en Python para convertir requerimientos de desarrollo de software en una estimación trazable, riesgos, cronograma, cotización y documentos PDF listos para revisión comercial.
 
 ## Decisión de ecosistema
@@ -40,6 +44,18 @@ uv run pytest -q
 
 # Iniciar el MCP en STDIO (normalmente lo inicia el cliente MCP)
 uv run python -m estimation_mcp.server
+```
+
+### Instalación directa desde GitHub
+
+```powershell
+uv tool install "git+https://github.com/SantosRojas/software-estimation-mcp.git"
+```
+
+O, en modo desarrollo con las dependencias de prueba:
+
+```powershell
+uv pip install -e "git+https://github.com/SantosRojas/software-estimation-mcp.git#dev"
 ```
 
 ## Conectar con un cliente MCP
