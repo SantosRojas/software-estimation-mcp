@@ -44,7 +44,12 @@ uv run python -m estimation_mcp.server
 
 ## Conectar con un cliente MCP
 
-Configura `mcpServers` en el cliente (Cursor, Claude Desktop u otro cliente compatible). Cambia las rutas por la ubicación real del proyecto:
+Hay dos plantillas en `examples/`; cambia las rutas por la ubicación real del proyecto:
+
+- `examples/mcp-config.json` — formato `mcpServers` para Cursor, Claude Desktop u otro cliente compatible.
+- `examples/opencode.json` — formato `mcp.servers` para OpenCode. Puede usarse como configuración de proyecto en cualquier repositorio consumidor, o copiarse a `~/.config/opencode/opencode.json` para disponer del servidor en todos los proyectos.
+
+Formato estándar (`mcpServers`):
 
 ```json
 {
@@ -56,6 +61,31 @@ Configura `mcpServers` en el cliente (Cursor, Claude Desktop u otro cliente comp
         "ESTIMATOR_OUTPUT_DIR": "C:\\Projects\\software-estimation-mcp\\output",
         "ESTIMATOR_TRANSPORT": "stdio",
         "ESTIMATOR_LOG_LEVEL": "INFO"
+      }
+    }
+  }
+}
+```
+
+Formato OpenCode (`opencode.json`):
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "servers": {
+      "software-estimation": {
+        "type": "local",
+        "command": [
+          "C:\\Projects\\software-estimation-mcp\\.venv\\Scripts\\python.exe",
+          "-m",
+          "estimation_mcp.server"
+        ],
+        "environment": {
+          "ESTIMATOR_OUTPUT_DIR": "C:\\Projects\\software-estimation-mcp\\output",
+          "ESTIMATOR_TRANSPORT": "stdio",
+          "ESTIMATOR_LOG_LEVEL": "INFO"
+        }
       }
     }
   }

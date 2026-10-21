@@ -1,0 +1,20 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "servers": {
+      "software-estimation": {
+        "type": "local",
+        "command": [
+          "ABSOLUTE_PATH_TO_PROJECT/.venv/Scripts/python.exe",
+          "-m",
+          "estimation_mcp.server"
+        ],
+        "environment": {
+          "ESTIMATOR_OUTPUT_DIR": "ABSOLUTE_PATH_TO_PROJECT/output",
+          "ESTIMATOR_TRANSPORT": "stdio",
+          "ESTIMATOR_LOG_LEVEL": "INFO"
+        }
+      }
+    }
+  }
+}
